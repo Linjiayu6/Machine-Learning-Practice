@@ -1,3 +1,2 @@
-# Linear-Regression
-[2020] LinearRegression / Python
-
+# Regression
+[2020] Linear Regression / Logistic Regression
