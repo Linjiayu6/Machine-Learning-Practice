@@ -36,9 +36,9 @@ def gradient_descent():
     while abs(x_new - x_old) > 0.00000000000001:
         x_old = x_new
         x_new = x_old + alpha * math_derivative(x_old)
-    return x_new, List
+    return x_new
 
-x_new, List = gradient_descent()
+x_new = gradient_descent()
 # 1.9999999999995068, 很接近2
 print('极限值, 应该是2, 梯度模拟接近: ', x_new)
 
