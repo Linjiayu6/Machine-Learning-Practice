@@ -35,7 +35,7 @@ def draw (data_mat, label_arr, weights_3_1):
             negative_y.append(y)
 
     fig = plt.figure()
-    ax = fig.add_subplot(111) 
+    ax = fig.add_subplot(111)
 
     # 画直线
     x = np.arange(-3.0, 3.0, 0.1)
@@ -49,13 +49,38 @@ def draw (data_mat, label_arr, weights_3_1):
     ax.scatter(negative_x, negative_y, s = 20, c = 'green',alpha=.5)            
     plt.title('positive: red; negative: green')                                                
     plt.show()
+   
+def draw_weights_loopnum (weights_loopnum_mat):
+    """
+    [ [0.98786192 0.99428432 0.82942775]
+      [0.97577096 0.98853428 0.65942642]
+      ... ]
+    """
+    # 画布分成3个区域 3 * 1 axs[0][0]表示第一行第一列
+    fig, axs = plt.subplots(nrows=3, ncols=1, sharex=False, sharey=False, figsize=(20, 10))
+    # 0 - 循环个数, 中间隔一位
+    x1 = np.arange(0, len(weights_loopnum_mat), 1)
+    # w0
+    axs[0].plot(x1, weights_loopnum_mat[:,0])
+    # axs0_ylabel_text = axs[0][0].set_ylabel(u'w0')
+    # plt.setp(axs0_ylabel_text, size=20, weight='bold', color='black')
+    # w1
+    axs[1].plot(x1, weights_loopnum_mat[:,1])
+    # axs1_ylabel_text = axs[1][0].set_ylabel(u'w1')
+    # plt.setp(axs1_ylabel_text, size=20, weight='bold', color='black')
+    # w2
+    axs[2].plot(x1, weights_loopnum_mat[:,2])
+    # axs2_ylabel_text = axs[2][0].set_ylabel(u'w2')
+    # plt.setp(axs2_ylabel_text, size=20, weight='bold', color='black')
     
+    plt.show()
+
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
 def train(data_mat, label_arr):
-    alpha = 0.001 # learning rate
-    loopnum = 100000 # repeat counts
+    alpha = 0.01 # learning rate
+    loopnum = 500 # repeat counts
     
     X_100_3 = np.mat(data_mat) # (100 * 3) [ [1, xx, xxx], [1. xx, xxx ], ... ]
     y_100_1 = np.mat(label_arr).transpose() # (100 * 1) [[y1], [y2], ... ]
@@ -70,6 +95,9 @@ def train(data_mat, label_arr):
     m, n = np.array(X_100_3).shape # m=100, n=3
     weights_3_1 = np.ones((n, 1)) # [ [1], [1], [1] ]
     
+    # 绘图使用: weights数据 和 迭代次数 的关系
+    weights_loopnum_arr = np.array([])
+
     # gradient descent
     for i in range(loopnum):
         # (1) z
@@ -79,15 +107,29 @@ def train(data_mat, label_arr):
         # (3) derivative
         dW_3_1 = X_100_3.T * (h_100_1 - y_100_1)
         # (4) weights
-        weights_3_1 -= alpha * dW_3_1 / n
+        # weights_3_1 -= alpha * dW_3_1 / n
+        weights_3_1 -= alpha * dW_3_1
+        
+        # 绘图使用: weights数据 和 迭代次数 的关系
+        weights_loopnum_arr = np.append(weights_loopnum_arr, weights_3_1)
 
-    print('weights: ', weights_3_1)
-    return weights_3_1
+    """
+      例如: weights_loopnum_arr = [1, 2, 3, 4, 5, 6], 循环2次
+      loopnum = 2, n = 3
+      分为2行3列的矩阵
+    """
+    weights_loopnum_mat = weights_loopnum_arr.reshape(loopnum, n)
+    return weights_3_1, weights_loopnum_mat
     
 if __name__ == "__main__":
+
     # 加载数据
     data_mat, label_arr = loadData()
-    weights_3_1 = train(data_mat, label_arr)
+    weights_3_1, weights_loopnum_mat = train(data_mat, label_arr)
 
     # 绘图
-    draw(data_mat, label_arr, weights_3_1)
+    # draw(data_mat, label_arr, weights_3_1)
+    
+    # 绘图: weights数据 和 迭代次数 的关系
+    draw_weights_loopnum(weights_loopnum_mat)
+    
