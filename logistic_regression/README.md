@@ -3,5 +3,6 @@
 # 1. Recap
 [image](https://wx3.sinaimg.cn/mw1024/0074cDOyly1gcesrpowsyj30u015tb29.jpg)
 
-![image](./imgs/logistic_derivative.jpeg)
+![image](./imgs/logistic_derivative1.jpeg)
+![image](./imgs/logistic_derivative2.jpeg)
 

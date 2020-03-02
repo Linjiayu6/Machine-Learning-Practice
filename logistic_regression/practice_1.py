@@ -39,7 +39,9 @@ def draw (data_mat, label_arr, weights_3_1):
 
     # 画直线
     x = np.arange(-3.0, 3.0, 0.1)
-    y = (-weights_3_1[0][0] - weights_3_1[1][0] * x) / weights_3_1[2][0]
+    # w0x0 + w1x1 + w2x2 = w0x0 + w1x1 + w2y (x2其实是y的坐标值)
+    # -(w0x0 + w1x1) = w2y => y = -(w0x0 + w1x1) / w2
+    y = - (weights_3_1[0][0] + weights_3_1[1][0] * x) / weights_3_1[2][0]
     ax.plot(x, y)
 
     # 散列图                                   
@@ -53,7 +55,7 @@ def sigmoid(z):
 
 def train(data_mat, label_arr):
     alpha = 0.001 # learning rate
-    loopnum = 1000 # repeat counts
+    loopnum = 100000 # repeat counts
     
     X_100_3 = np.mat(data_mat) # (100 * 3) [ [1, xx, xxx], [1. xx, xxx ], ... ]
     y_100_1 = np.mat(label_arr).transpose() # (100 * 1) [[y1], [y2], ... ]
@@ -68,15 +70,17 @@ def train(data_mat, label_arr):
     m, n = np.array(X_100_3).shape # m=100, n=3
     weights_3_1 = np.ones((n, 1)) # [ [1], [1], [1] ]
     
+    # gradient descent
     for i in range(loopnum):
         # (1) z
         z_100_1 = X_100_3 * weights_3_1
         # (2) h
         h_100_1 = sigmoid(z_100_1)
         # (3) derivative
-        dW_3_1 = X_100_3.T * (y_100_1 - h_100_1)
+        dW_3_1 = X_100_3.T * (h_100_1 - y_100_1)
         # (4) weights
-        weights_3_1 += alpha * dW_3_1
+        weights_3_1 -= alpha * dW_3_1 / n
+
     print('weights: ', weights_3_1)
     return weights_3_1
     
