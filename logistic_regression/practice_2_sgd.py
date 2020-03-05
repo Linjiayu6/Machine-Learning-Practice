@@ -79,7 +79,7 @@ def train (data_mat, classify_arr):
     # 初始化 weights [1. 1. 1.]
     w_1_3 = np.ones(n)
     # 学习次数
-    loopnum = 500
+    loopnum = 300
     # 学习率 alpha = 0.02
 
     data = np.array(data_mat)
@@ -94,8 +94,9 @@ def train (data_mat, classify_arr):
         # m = 100个样本, 对每个样本进行迭代计算权重值, 并每次训练样本不重复
         for j in range(m):
             # 降低alpha的大小，每次减小 1 / (j + i), i和j有可能为0会出错的所以(i + j + 1)
-            # alpha = 0.01 + 10 / (1 + j + i)
-            alpha = 0.015
+            # i(1-300) j(1-100) 0.01 + (10 - 0.025)
+            # alpha = 0.01 + 4 / (1 + j + i)
+            alpha = 0.01
             
             # 从_templist中, 选择个随机数
             random_index = int(random.uniform(0, len(_templist))) # 从0-_templist, 随机选个index
