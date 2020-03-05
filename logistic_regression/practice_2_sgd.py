@@ -3,6 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import math
 
 # 加载数据
 def load_data ():
@@ -78,13 +79,13 @@ def train (data_mat, classify_arr):
     # 初始化 weights [1. 1. 1.]
     w_1_3 = np.ones(n)
     # 学习次数
-    loopnum = 200
-    # 学习率 alpha = 0.01
-    
+    loopnum = 500
+    # 学习率 alpha = 0.02
+
     data = np.array(data_mat)
     # 绘图使用: 权重和迭代次数的关系
     weights_loopnum_arr = []
-    
+
     # 随机梯度下降算法 ((1) 并非对矩阵操作, 是对数组(一组数据) 操作 (2) 学习率也有所变化)
     for i in range(loopnum):
         # 暂存列表(目的: 每次训练样本不重复)
@@ -93,8 +94,8 @@ def train (data_mat, classify_arr):
         # m = 100个样本, 对每个样本进行迭代计算权重值, 并每次训练样本不重复
         for j in range(m):
             # 降低alpha的大小，每次减小 1 / (j + i), i和j有可能为0会出错的所以(i + j + 1)
-            # alpha = 0.01 + 4 / (1 + j + i)
-            alpha = 0.01 + 10 / (1 + j + i)
+            # alpha = 0.01 + 10 / (1 + j + i)
+            alpha = 0.015
             
             # 从_templist中, 选择个随机数
             random_index = int(random.uniform(0, len(_templist))) # 从0-_templist, 随机选个index
@@ -117,9 +118,27 @@ def train (data_mat, classify_arr):
             
     # 处理weights_loopnum_arr
     weights_loopnum_mat = weights_loopnum_arr.reshape(loopnum * m, n)
-
     return w_1_3, weights_loopnum_mat
 
+# 评估
+def evaluate(data_mat, label_arr, w_1_3):
+    z_100_1 = data_mat * np.mat(w_1_3).T
+    h_100_1 = sigmoid(z_100_1)
+    
+    # C = -ylogh(x) - (1 - y)log(1 - h(x))
+    z = np.array(z_100_1)
+    h = np.array(h_100_1).flatten()
+    
+    def costfunction (y_predict, y_true):
+        return -y_true * math.log(y_predict, 2) - (1 - y_true) * math.log(1 - y_predict, 2)
+
+    loss_arr, error_arr = [], []
+    for i in range(len(label_arr)):
+        y_true = label_arr[i]
+        y_predict = h[i]
+        loss_value = costfunction(y_predict, y_true)
+        loss_arr.append(loss_value)
+    print('Successful Rate:', (1 - sum(loss_arr) / len(label_arr)) * 100, '%')
 
 if __name__ == "__main__":
     # 数据, 真实分类值
@@ -133,3 +152,6 @@ if __name__ == "__main__":
 
     # 绘关系图
     draw_weights_loopnum(weights_loopnum_mat)
+    
+    # 评估
+    evaluate(data_mat, classify_arr, w_1_3)

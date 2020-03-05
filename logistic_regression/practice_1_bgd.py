@@ -2,6 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 def loadData ():
     fr = open('./dataset.txt')
@@ -107,8 +108,7 @@ def train(data_mat, label_arr):
         # (3) derivative
         dW_3_1 = X_100_3.T * (h_100_1 - y_100_1)
         # (4) weights
-        # weights_3_1 -= alpha * dW_3_1 / n
-        weights_3_1 -= alpha * dW_3_1
+        weights_3_1 -= alpha * dW_3_1 / n
         
         # 绘图使用: weights数据 和 迭代次数 的关系
         weights_loopnum_arr = np.append(weights_loopnum_arr, weights_3_1)
@@ -120,6 +120,26 @@ def train(data_mat, label_arr):
     """
     weights_loopnum_mat = weights_loopnum_arr.reshape(loopnum, n)
     return weights_3_1, weights_loopnum_mat
+
+def evaluate(data_mat, label_arr, weights_3_1):
+    # 评估模型
+    z_100_1 = np.mat(data_mat) * weights_3_1
+    h_100_1 = sigmoid(z_100_1)
+    
+    # C = -ylogh(x) - (1 - y)log(1 - h(x))
+    z = np.array(z_100_1)
+    h = np.array(h_100_1).flatten()
+    
+    def costfunction (y_predict, y_true):
+        return -y_true * math.log(y_predict, 2) - (1 - y_true) * math.log(1 - y_predict, 2)
+
+    loss_arr, error_arr = [], []
+    for i in range(len(label_arr)):
+        y_true = label_arr[i]
+        y_predict = h[i]
+        loss_value = costfunction(y_predict, y_true)
+        loss_arr.append(loss_value)
+    print('Successful Rate:', (1 - sum(loss_arr) / len(label_arr)) * 100, '%')
     
 if __name__ == "__main__":
 
@@ -133,3 +153,5 @@ if __name__ == "__main__":
     # 绘图: weights数据 和 迭代次数 的关系
     draw_weights_loopnum(weights_loopnum_mat)
     
+    # 评估模型
+    evaluate(data_mat, label_arr, weights_3_1)
