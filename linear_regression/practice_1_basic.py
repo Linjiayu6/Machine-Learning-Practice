@@ -28,7 +28,6 @@ def load_dataset (fileName):
 
     return xArr, yArr
 
-
 def matplot (xArr, yArr, X_copy, Y_predict):
     # Xaxis = [0.067732, ...] Yaxis = [3.176513]
     Xaxis, Yaxis = [], []
@@ -66,23 +65,39 @@ def train (xArr, yArr):
     # Y => Y.T
     X, Y = np.mat(xArr), np.mat(yArr).T
 
-    # Matrix Caculus T=transpose I=inverse
-    dW = (X.T * X).I * (X.T * Y)
-    return dW
+    # 正规化: Matrix Caculus T=transpose I=inverse
+    W = (X.T * X).I * (X.T * Y)
+    return W
+
+def train_gradient_descent (xArr, yArr):
+    X, Y = np.mat(xArr), np.mat(yArr).T
+    m, n = X.shape # 200, 2
+    weights = np.ones((n, 1)) #[[1], [1]] n*1
     
+    alpha = 0.01
+    loop_num = 1000
+    
+    for i in range(loop_num):
+        # 1/m * X.T * (XW - y)
+        weights -= alpha * 1/m * (X.T * (X * weights - Y))
+    return weights
+  
 if __name__ == '__main__':
     # 载入数据
     xArr, yArr = load_dataset('dataset.txt')
+
+    # 训练 方法1: 正规方式, 等到矩阵导数
+    # W = train(xArr, yArr) # dW = [[3.00774324] [1.69532264]]
     
-    # 训练: 得到矩阵导数
-    dW = train(xArr, yArr) # dW = [[3.00774324] [1.69532264]]
+    # 训练 方法2: 梯度下降方法, 得到矩阵导数
+    W = train_gradient_descent(xArr, yArr)
     
     X_copy = np.mat(xArr).copy()
     # [ [1, 0.3], [1, 0.4] ] 排序是为了方便matplot图像输出
     X_copy.sort(0)
     
     # 预测: y = X * w
-    Y_predict = X_copy * dW
+    Y_predict = X_copy * W
     
     # 拟合效果: 比较真实值和预测值得相关性 np.corrcoef(Y_predict, Y_train)
     convex = np.corrcoef(Y_predict.T, np.mat(yArr))
@@ -100,4 +115,4 @@ if __name__ == '__main__':
     print('[Loss Value]: ', loss) # 0.21483169
     
     # 图像
-    # matplot(xArr, yArr, X_copy[:, 1], Y_predict)
+    matplot(xArr, yArr, X_copy[:, 1], Y_predict)
