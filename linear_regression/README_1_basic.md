@@ -34,7 +34,3 @@ x0          x1          y
 ![practice_1](./imgs/practice_1.png)
 
 **`存在欠拟合 underfit 情况`**
-
-
-### 2.2 Practice II
-TODO: Locally Weighted Linear Regression
