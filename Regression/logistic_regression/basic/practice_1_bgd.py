@@ -108,7 +108,7 @@ def train(data_mat, label_arr):
         # (3) derivative
         dW_3_1 = X_100_3.T * (h_100_1 - y_100_1)
         # (4) weights
-        weights_3_1 -= alpha * dW_3_1 / n
+        weights_3_1 -= alpha * dW_3_1 / m
         
         # 绘图使用: weights数据 和 迭代次数 的关系
         weights_loopnum_arr = np.append(weights_loopnum_arr, weights_3_1)

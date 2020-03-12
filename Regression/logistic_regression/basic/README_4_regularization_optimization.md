@@ -1,3 +1,9 @@
+
+# 学习率 和 特征缩放优化
+[[Chapter 4] 多变量的线性回归 Linear Regression with Multiple Variables](https://github.com/Linjiayu6/Machine-Learning-Practice/wiki/%5BChapter-4%5D-%E5%A4%9A%E5%8F%98%E9%87%8F%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92-Linear-Regression-with-Multiple-Variables)
+
+
+
 # 正则化处理 逻辑回归
 
 逻辑回归 有损函数:

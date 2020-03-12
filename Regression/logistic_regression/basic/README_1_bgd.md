@@ -14,7 +14,7 @@
 - 坏处是: 数据量大的时候, 该方案预算速度会特别的慢, 效率低, 也就是说收敛的速度慢。
 (解释: 例如模型是个$w0x0 + w1x1 + w2x2$, 每一次(n)迭代, 需要100 * 3次乘法 和 100 * 2次加法)
 
-[image](https://wx3.sinaimg.cn/mw1024/0074cDOyly1gcesrpowsyj30u015tb29.jpg)
+![image](https://wx3.sinaimg.cn/mw1024/0074cDOyly1gcesrpowsyj30u015tb29.jpg)
 
 ![image](./imgs/logistic_derivative1.jpeg)
 ![image](./imgs/logistic_derivative2.jpeg)

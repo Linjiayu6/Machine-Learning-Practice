@@ -11,12 +11,28 @@ copy from practice_1_bgd.py
 def loadData ():
     fr = open('./dataset.txt')
     data_mat, label_arr = [], []
+    x1_arr, x2_arr = [], []
+
     for linestr in fr.readlines():
         lineArr = linestr.strip().split()
+        x1_arr.append(float(lineArr[0]))
+        x2_arr.append(float(lineArr[1]))
+
         data_mat.append([1.0, float(lineArr[0]), float(lineArr[1])])
         label_arr.append(int(lineArr[2]))   
     fr.close()
-    return data_mat, label_arr
+    x1_mean = np.mean(x1_arr)
+    s1 = max(x1_arr) - min(x1_arr)
+    
+    x2_mean = np.mean(x2_arr)
+    s2 = max(x2_arr) - min(x2_arr)
+    
+    X = np.mat(data_mat)
+    X[:, 1] =  (X[:, 1] - x1_mean) / s1
+    X[:, 2] =  (X[:, 2] - x2_mean) / s2
+
+    # return data_mat, label_arr
+    return X, label_arr
 
 def draw (data_mat, label_arr, weights_3_1):
     dataArr = np.array(data_mat) # 转换成numpy的array数组
@@ -59,13 +75,20 @@ def draw_weights_loopnum (weights_loopnum_mat):
     axs[2].plot(x1, weights_loopnum_mat[:,2])
     plt.show()
 
+def draw_J_loopnum(J_arr):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(np.arange(len(J_arr)), J_arr, '.-')
+    plt.title('costfx & loopnum')                                                
+    plt.show()
+    
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
 def train(data_mat, label_arr):
-    alpha = 0.01 # learning rate
-    loopnum = 500 # repeat counts
-    lambda_data = 0.1 # 正则化参数, 这个数你加大到20, 会有高偏置 bias, 非常的明显
+    # alpha = 0.01 # learning rate
+    loopnum = 200 # repeat counts
+    lambda_data = 0 # 正则化参数, 这个数你加大到20, 会有高偏置 bias, 非常的明显
 
     X_100_3 = np.mat(data_mat) # (100 * 3) [ [1, xx, xxx], [1. xx, xxx ], ... ]
     y_100_1 = np.mat(label_arr).transpose() # (100 * 1) [[y1], [y2], ... ]
@@ -83,9 +106,20 @@ def train(data_mat, label_arr):
     
     # 绘图使用: weights数据 和 迭代次数 的关系
     weights_loopnum_arr = np.array([])
+    J_arr = []
 
     # gradient descent
     for i in range(loopnum):
+        alpha = 1.2
+        # if i < 20:
+        #     alpha = 0.1
+        # elif i >= 20 and i < 50:
+        #     alpha = 0.05
+        # elif i >= 50 and i < 150:
+        #     alpha = 0.01
+        # else:
+        #     alpha = 0.005
+
         # (1) z
         z_100_1 = X_100_3 * weights_3_1
         # (2) h
@@ -98,6 +132,9 @@ def train(data_mat, label_arr):
         
         # 绘图使用: weights数据 和 迭代次数 的关系
         weights_loopnum_arr = np.append(weights_loopnum_arr, weights_3_1)
+        
+        # 绘图使用: 损失函数值 和 迭代次数 的关系
+        J_arr = np.append(J_arr, CostFn(y_100_1, h_100_1))
 
     """
       例如: weights_loopnum_arr = [1, 2, 3, 4, 5, 6], 循环2次
@@ -105,8 +142,17 @@ def train(data_mat, label_arr):
       分为2行3列的矩阵
     """
     weights_loopnum_mat = weights_loopnum_arr.reshape(loopnum, n)
-    return weights_3_1, weights_loopnum_mat
+    return weights_3_1, weights_loopnum_mat, J_arr
 
+def CostFn(y_true, y_predict):
+    y_1 = - np.mat(y_true)
+    fn_1 = np.log2(y_predict)
+    y_2 = - np.mat((1 - y_true))
+    fn_2 = np.log2(1 - y_predict)
+    # -y_true * math.log(y_predict, 2) - (1 - y_true) * math.log(1 - y_predict, 2)
+    J_arr = np.multiply(np.array(y_1), np.array(fn_1)) + np.multiply(np.array(y_2), np.array(fn_2))
+    return sum(J_arr) / len(J_arr)
+    
 def evaluate(data_mat, label_arr, weights_3_1):
     # 评估模型
     z_100_1 = np.mat(data_mat) * weights_3_1
@@ -131,7 +177,7 @@ if __name__ == "__main__":
 
     # 加载数据
     data_mat, label_arr = loadData()
-    weights_3_1, weights_loopnum_mat = train(data_mat, label_arr)
+    weights_3_1, weights_loopnum_mat, J_arr = train(data_mat, label_arr)
 
     # 绘图
     draw(data_mat, label_arr, weights_3_1)
@@ -139,5 +185,9 @@ if __name__ == "__main__":
     # 绘图: weights数据 和 迭代次数 的关系
     draw_weights_loopnum(weights_loopnum_mat)
     
+    # 绘图: 损失函数值 和 迭代次数 的关系
+    draw_J_loopnum(J_arr)
+    print('cost function', J_arr[-1])
+    
     # 评估模型
-    evaluate(data_mat, label_arr, weights_3_1)
+    # evaluate(data_mat, label_arr, weights_3_1)
