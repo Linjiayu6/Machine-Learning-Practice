@@ -17,21 +17,6 @@ def cost_function(Y_true, Y_predict):
 def derivative_cost_function(y_true, y_predict):
     # dC / dy_predict
     return -2*(y_true - y_predict)
-    
-# activation, weights, bias
-class Neuron:
-    def __init__(self, weights, bias):
-        self.weights = weights
-        self.bias = bias
-    
-    def create(self, inputs):
-        # z = (w1x1 + w2x2 + ... +wnxn) + bias
-        # z = W dot X = W^(T) X + bias
-        # a = sigmoid(z)
-
-        #(1) dot prouct or (2) matrix multiplication
-        z = np.vdot(self.weights, self.inputs) + bias
-        return sigmoid(z)
 
 class NeuralNetwork:
     def __init__(self):
