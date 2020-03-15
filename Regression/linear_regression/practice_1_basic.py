@@ -75,7 +75,7 @@ def train_gradient_descent (xArr, yArr):
     weights = np.ones((n, 1)) #[[1], [1]] n*1
     
     alpha = 0.01
-    loop_num = 1000
+    loop_num = 10000
     
     for i in range(loop_num):
         # 1/m * X.T * (XW - y)
